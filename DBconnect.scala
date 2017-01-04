@@ -12,7 +12,8 @@ class DBConstants{
     def USERNAME: String = {"root"}
     def PASSWORD: String = {"root"}
 }
-        
+
+
 class ScalaJdbcConnectSelect{
 
     // connect to the database named "mysql" on the localhost
@@ -43,13 +44,10 @@ class ScalaJdbcConnectSelect{
          // create the statement, and run the select query
       val statement = connection.createStatement()
       val resultSet = statement.executeQuery(Query)
-/*"SELECT BookCodeDebitAcc, BookCodeCreditAcc FROM BookCodes " +
-                                             "WHERE BookCode = 'GENEXP' ")
-                                             */
+
       while ( resultSet.next() ) {
         val host = resultSet.getString("")
         val user = resultSet.getString("")
-        println()
       }  
  }
  def CloseConnection Unit={  connection.close() }
