@@ -40,7 +40,7 @@ class ScalaJdbcConnectSelect{
   
   def giveConnection: Connection = { connection }
     
-  def ExecQuery(connection: Connection, Query: String)  = {
+  def ExecQuery(connection: Connection, Query: String) Unit = {
          // create the statement, and run the select query
       val statement = connection.createStatement()
       val resultSet = statement.executeQuery(Query)
@@ -50,6 +50,6 @@ class ScalaJdbcConnectSelect{
         val user = resultSet.getString("")
       }  
  }
- def CloseConnection Unit={  connection.close() }
+ def CloseConnection: Unit={  connection.close() }
   
 }
