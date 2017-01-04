@@ -40,16 +40,18 @@ class ScalaJdbcConnectSelect{
   
   def giveConnection: Connection = { connection }
     
-  def ExecQuery(connection: Connection, Query: String): Unit = {
-         // create the statement, and run the select query
-      val statement = connection.createStatement()
-      val resultSet = statement.executeQuery(Query)
-
-      while ( resultSet.next() ) {
-        val host = resultSet.getString("")
-        val user = resultSet.getString("")
-      }  
- }
- def CloseConnection: Unit={  connection.close() }
+  def CloseConnection: Unit={  connection.close() }
   
 }
+
+
+class execQuery(connection: Connection, SQLQuery: String) {
+
+   val statement = connection.createStatement()
+   val resultSet = statement.executeQuery(SQLQuery)
+    
+   def scrollCursor: Boolean={resultSet.next()}
+   
+   def getVal(ColumnValue: String): Any= {resultSet.getString(ColumnValue)}
+    
+ }
