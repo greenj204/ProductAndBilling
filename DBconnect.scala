@@ -7,7 +7,7 @@ import java.sql.Connection
  * Setting Database connection constants
  */
 class DBConstants{
-    def Driver: String = {"com.mysql.jdbc.Driver"}
+    def DRIVER: String = {"com.mysql.jdbc.Driver"}
     def URL: String = {"jdbc:mysql://localhost:8889/ProductAndBilling"}
     def USERNAME: String = {"root"}
     def PASSWORD: String = {"root"}
@@ -40,7 +40,7 @@ class ScalaJdbcConnectSelect{
   
   def giveConnection: Connection = { connection }
     
-  def ExecQuery(connection: Connection, Query: String) Unit = {
+  def ExecQuery(connection: Connection, Query: String): Unit = {
          // create the statement, and run the select query
       val statement = connection.createStatement()
       val resultSet = statement.executeQuery(Query)
