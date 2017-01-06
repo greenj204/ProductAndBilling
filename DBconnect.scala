@@ -37,13 +37,42 @@ class ScalaJdbcConnectSelect{
       case e=> e.printStackTrace
     }
   }   //setConnection end
-  
+    
+ 
   def giveConnection: Connection = { connection }
     
   def CloseConnection: Unit={  connection.close() }
   
 }
 
+class getBaseConfig() {
+    
+    var ProductConfig = false
+    var CustomerConfig = false
+    val DBCon = new ScalaJdbcConnectSelect()
+    
+    DBCon.setConnection
+    
+    def queryBaseVals(): Unit={
+    
+        val getData =  new execQuery()
+        
+        val QueryString="SELECT ConfigCode,ConfigBoolean " +
+                        "FROM Configuration " +
+                        "WHERE ConFigCode IN ('PRODUCT', 'CUSTOMER' ) " +
+                        "ORDER BY ConfigCode DESC"
+        
+        getData.execQuery(DBCon.giveConnection, QueryString)
+        
+        if ( getData.scrollCursor ) { ProductConfig = getData.getVal("ConfigBoolean") }
+        if ( getData.scrollCursor ) { CustomerConfig = getData.getVal("ConfigBoolean") }
+        
+        DBCon.CloseConnection
+    }
+    
+    def getProduct: Boolean= {ProductConfig}
+    def getCustomer: Boolean= {CustomerConfig}
+}
 
 class execQuery(connection: Connection, SQLQuery: String) {
 
