@@ -2,6 +2,7 @@ package jdbc
 
 import java.sql.DriverManager
 import java.sql.Connection
+import scala.collections.mutable
 
 /**
  * Setting Database connection constants
@@ -13,15 +14,15 @@ class DBConstants{
     def PASSWORD: String = {"root"}
 }
 
-class SystemConguration {
+class SystemConfiguration{
     
-    val ServiceConfig = mutable.Map.empty[String, Int]
+    val ServiceConfig = mutable.Map.empty[String, Boolean]
     val ConfigString = mutable.Map.empty[String, String]
     val ConfigInt = mutable.Map.empty[String, Int]
     val ConfigBool = mutable.Map.empty[String, Boolean]
     val ConfigFloat = mutable.Map.empty[String, Float]
     
-    def getService(ServiceCode: String): Boolean=(ServiceConfig(ServiceCode))
+    def getService(ServiceCode: String): Boolean={ServiceConfig(ServiceCode)}
 }
 
 class ScalaJdbcConnectSelect{
@@ -55,31 +56,29 @@ class ScalaJdbcConnectSelect{
   def isConnected: Boolean = { connected }
     
   def CloseConnection: Unit={  connection.close() }
-  
+ 
 }
 
 class execQuery(connection: Connection, SQLQuery: String) {
-
+    
    val statement = connection.createStatement()
    val resultSet = statement.executeQuery(SQLQuery)
     
    def scrollCursor: Boolean={resultSet.next()}
    
-   def getVal(ColumnValue: String): Any= {resultSet.getString(ColumnValue)}
+   def getBoolean(ColumnValue: String): Boolean= {resultSet.getBoolean(ColumnValue)}
     
-}
+} 
+
 
 class getBaseConfig() {
     
-    val Service = new SystemConfiguration()
+    val Services = new SystemConfiguration()
     var ConfigInit = false
     val DBCon = new ScalaJdbcConnectSelect()
 
     
    def getServices(): Unit={
-        
-       val Services = new SystemConfiguration()
-       val getData =  new execQuery()
             
        val QueryString="SELECT ConfigCode,ConfigBoolean " +
                        "FROM Configuration " +
@@ -89,16 +88,19 @@ class getBaseConfig() {
        DBCon.setConnection
         
        if ( DBCon.isConnected ) {
-          getData.execQuery(DBCon.getConnection, QueryString)
+          val getData = new execQuery(DBCon.getConnection, QueryString)
         
           if ( getData.scrollCursor ) { 
-             Services.ServiceConfig("PRODUCT") = getData.getVal("ConfigBoolean")
+             Services.ServiceConfig("PRODUCT") = getData.getBoolean("ConfigBoolean")
              if ( getData.scrollCursor ) {
-                 Services.SericeConfig("CUSTOMER") = getData.getVal("ConfigBoolean")
-                 ConfigInit=true}
-             }   // scrollCursor
-          }      // scrollCursor 
-      }          // isConnected
+                 Services.ServiceConfig("CUSTOMER") = getData.getBoolean("ConfigBoolean")
+                 ConfigInit=true
+             }    // scrollCursor
+          }       // scrollCursor 
+       }          // isConnected
+    
+       DBCon.CloseConnection
+    
    }
 
    def CustomerService: Boolean= { Services.ServiceConfig("CUSTOMER")}
