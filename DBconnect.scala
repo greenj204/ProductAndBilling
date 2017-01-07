@@ -22,6 +22,11 @@ class SystemConfiguration{
     val ConfigBool = mutable.Map.empty[String, Boolean]
     val ConfigFloat = mutable.Map.empty[String, Float]
     
+    val PRODUCT = "PRODUCT"
+    val CUSTOMER = "CUSTOMER"
+    val PROJECT = "PROJECT"
+    val FINANCE = "FINANCE"
+    
     def getService(ServiceCode: String): Boolean={ServiceConfig(ServiceCode)}
 }
 
@@ -67,6 +72,7 @@ class execQuery(connection: Connection, SQLQuery: String) {
    def scrollCursor: Boolean={resultSet.next()}
    
    def getBoolean(ColumnValue: String): Boolean= {resultSet.getBoolean(ColumnValue)}
+   def getString(ColumnValue: String): String= {resultSet.getString(ColumnValue) }
     
 } 
 
@@ -79,10 +85,12 @@ class getBaseConfig() {
 
     
    def getServices(): Unit={
-            
+      
+       var String ConfigCode
        val QueryString="SELECT ConfigCode,ConfigBoolean " +
                        "FROM Configuration " +
-                       "WHERE ConFigCode IN ('PRODUCT', 'CUSTOMER' ) " +
+                       "WHERE ConFigCode IN ('" + Services.PRODUCT + "','" +
+                                                  Services.CUSTOMER + "' ) " +
                        "ORDER BY ConfigCode DESC"
             
        DBCon.setConnection
@@ -90,20 +98,23 @@ class getBaseConfig() {
        if ( DBCon.isConnected ) {
           val getData = new execQuery(DBCon.getConnection, QueryString)
         
-          if ( getData.scrollCursor ) { 
-             Services.ServiceConfig("PRODUCT") = getData.getBoolean("ConfigBoolean")
-             if ( getData.scrollCursor ) {
-                 Services.ServiceConfig("CUSTOMER") = getData.getBoolean("ConfigBoolean")
-                 ConfigInit=true
+          while ( getData.scrollCursor ) {
+             ConfigCode = getData.getString("ConfigCode")
+             if ( ConfigCode == Services.PRODUCT ) {
+                 Services.ServiceConfig(Services.PRODUCT) = getData.getBoolean("ConfigBoolean") 
+             }
+             if ( ConfigCode == Services.CUSTOMER ) {
+                 Services.ServiceConfig(Services.CUSTOMER) = getData.getBoolean("ConfigBoolean")
              }    // scrollCursor
           }       // scrollCursor 
        }          // isConnected
     
        DBCon.CloseConnection
-    
+       ConfigInit = true
+      
    }
 
-   def CustomerService: Boolean= { Services.ServiceConfig("CUSTOMER")}
-   def ProductService: Boolean = { Services.ServiceConfig("PRODUCT")}
+   def CustomerService: Boolean= { Services.ServiceConfig(Services.CUSTOMER)}
+   def ProductService: Boolean = { Services.ServiceConfig(Services.PRODUCT)}
 }
 
