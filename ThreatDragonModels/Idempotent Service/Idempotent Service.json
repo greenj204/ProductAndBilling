@@ -1,0 +1,18 @@
+{
+  "summary": {
+    "title": "Idempotent Service",
+    "owner": "James",
+    "description": "The system checks a requests has not been seen before. If it has it provides a response to the requestor and no further processing is undertaken."
+  },
+  "detail": {
+    "contributors": [],
+    "diagrams": [
+      {
+        "title": "Idempotent Service",
+        "thumbnail": "./public/content/images/thumbnail.jpg",
+        "id": 0
+      }
+    ],
+    "reviewer": "James"
+  }
+}
